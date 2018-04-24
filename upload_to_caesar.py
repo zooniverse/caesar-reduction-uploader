@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import sys
 import csv
 from run_cache import RunCache
 from caesar import CaesarClient
@@ -12,16 +13,21 @@ WORKFLOW_ID = 5374
 last_run = RunCache('last_run.pickle')
 caesar = CaesarClient(USERNAME, PASSWORD)
 
-with open("scores_with_gold.csv") as csvfile:
-    reader = csv.reader(csvfile)
+csv_filename = sys.argv[1]
+
+with open(csv_filename) as csvfile:
+    reader = csv.DictReader(csvfile)
     for row in reader:
-        subject_id = int(row[0])
-        gold = int(row[1])
-        score = float(row[2])
+        subject_id = int(row['id'])
         
         if last_run.is_changed(subject_id, row):
             last_run.update(subject_id, row)
-            data = {'gold': gold, 'score': score}
+            data = {
+                'gold': int(row['gold']),
+                'score': float(row['score']),
+                'retired': int(row['retired']),
+                'seen': int(row['seen'])
+            }
             r = caesar.update_reduction(WORKFLOW_ID, subject_id, data)
 
             if not r.status_code == 200:
