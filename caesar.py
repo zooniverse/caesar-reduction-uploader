@@ -12,5 +12,5 @@ class CaesarClient:
         url = 'https://caesar.zooniverse.org/workflows/%i/reducers/swap/reductions' % workflow_id
         payload = {'reduction': {'subject_id': subject_id, 'data': data}}
         
-        response = s.put(url, json=payload, headers=self.headers)
+        response = self.session.put(url, json=payload, headers=self.headers)
         return response
