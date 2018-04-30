@@ -22,6 +22,7 @@ with open(csv_filename) as csvfile:
         
         if last_run.is_changed(subject_id, row):
             last_run.update(subject_id, row)
+            last_run.save()
             data = {
                 'gold': int(row['gold']),
                 'score': float(row['score']),
